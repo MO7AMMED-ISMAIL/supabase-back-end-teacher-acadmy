@@ -29,13 +29,13 @@ export abstract class BaseModel<T> {
     }
 
     async create(payload: Partial<T>): Promise<T> {
-        const { data, error } = await db.from(this.tableName).insert(payload).select().single();
+        const { data, error } = await db.from(this.tableName).insert(payload as any).select().single();
         if (error) throw new Error(error.message);
         return data as T;
     }
 
     async update(id: string, payload: Partial<T>): Promise<T> {
-        const { data, error } = await db.from(this.tableName).update(payload).eq("id", id).select().single();
+        const { data, error } = await db.from(this.tableName).update(payload as any).eq("id", id).select().single();
         if (error) throw new Error(error.message);
         return data as T;
     }
