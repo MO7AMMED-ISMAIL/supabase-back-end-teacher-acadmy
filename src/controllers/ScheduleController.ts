@@ -5,14 +5,12 @@ import { ScheduleService } from "../services/ScheduleService";
 const scheduleService = new ScheduleService();
 
 export class ScheduleController extends BaseController {
-    registerRoutes(): void { }
-
     static getAll = async (req: Request, res: Response): Promise<void> => {
         try {
             const schedules = await scheduleService.getAll();
-            res.status(200).json({ success: true, data: schedules });
+            this.sendSuccess(res, schedules);
         } catch (err) {
-            res.status(500).json({ success: false, error: err instanceof Error ? err.message : "Failed to fetch schedules" });
+            this.sendError(res, err instanceof Error ? err.message : "Failed to fetch schedules");
         }
     };
 
@@ -20,39 +18,39 @@ export class ScheduleController extends BaseController {
         try {
             const schedule = await scheduleService.getById(req.params.id);
             if (!schedule) {
-                res.status(404).json({ success: false, error: "Schedule not found" });
+                this.sendError(res, "Schedule not found", 404);
                 return;
             }
-            res.status(200).json({ success: true, data: schedule });
+            this.sendSuccess(res, schedule);
         } catch (err) {
-            res.status(500).json({ success: false, error: err instanceof Error ? err.message : "Error" });
+            this.sendError(res, err instanceof Error ? err.message : "Error");
         }
     };
 
     static create = async (req: Request, res: Response): Promise<void> => {
         try {
             const schedule = await scheduleService.create(req.body);
-            res.status(201).json({ success: true, data: schedule, message: "Schedule created" });
+            this.sendSuccess(res, schedule, 201, "Schedule created");
         } catch (err) {
-            res.status(400).json({ success: false, error: err instanceof Error ? err.message : "Error" });
+            this.sendError(res, err instanceof Error ? err.message : "Error", 400);
         }
     };
 
     static update = async (req: Request, res: Response): Promise<void> => {
         try {
             const schedule = await scheduleService.update(req.params.id, req.body);
-            res.status(200).json({ success: true, data: schedule, message: "Schedule updated" });
+            this.sendSuccess(res, schedule, 200, "Schedule updated");
         } catch (err) {
-            res.status(400).json({ success: false, error: err instanceof Error ? err.message : "Error" });
+            this.sendError(res, err instanceof Error ? err.message : "Error", 400);
         }
     };
 
     static delete = async (req: Request, res: Response): Promise<void> => {
         try {
             await scheduleService.delete(req.params.id);
-            res.status(200).json({ success: true, data: null, message: "Schedule deleted" });
+            this.sendSuccess(res, null, 200, "Schedule deleted");
         } catch (err) {
-            res.status(500).json({ success: false, error: err instanceof Error ? err.message : "Error" });
+            this.sendError(res, err instanceof Error ? err.message : "Error");
         }
     };
 }

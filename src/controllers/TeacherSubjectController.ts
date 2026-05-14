@@ -5,14 +5,12 @@ import { TeacherSubjectService } from "../services/TeacherSubjectService";
 const teacherSubjectService = new TeacherSubjectService();
 
 export class TeacherSubjectController extends BaseController {
-    registerRoutes(): void { }
-
     static getAll = async (req: Request, res: Response): Promise<void> => {
         try {
             const assignments = await teacherSubjectService.getAll();
-            res.status(200).json({ success: true, data: assignments });
+            this.sendSuccess(res, assignments);
         } catch (err) {
-            res.status(500).json({ success: false, error: err instanceof Error ? err.message : "Failed to fetch assignments" });
+            this.sendError(res, err instanceof Error ? err.message : "Failed to fetch assignments");
         }
     };
 
@@ -20,39 +18,39 @@ export class TeacherSubjectController extends BaseController {
         try {
             const assignment = await teacherSubjectService.getById(req.params.id);
             if (!assignment) {
-                res.status(404).json({ success: false, error: "Assignment not found" });
+                this.sendError(res, "Assignment not found", 404);
                 return;
             }
-            res.status(200).json({ success: true, data: assignment });
+            this.sendSuccess(res, assignment);
         } catch (err) {
-            res.status(500).json({ success: false, error: err instanceof Error ? err.message : "Error" });
+            this.sendError(res, err instanceof Error ? err.message : "Error");
         }
     };
 
     static create = async (req: Request, res: Response): Promise<void> => {
         try {
             const assignment = await teacherSubjectService.create(req.body);
-            res.status(201).json({ success: true, data: assignment, message: "Assignment created" });
+            this.sendSuccess(res, assignment, 201, "Assignment created");
         } catch (err) {
-            res.status(400).json({ success: false, error: err instanceof Error ? err.message : "Error" });
+            this.sendError(res, err instanceof Error ? err.message : "Error", 400);
         }
     };
 
     static update = async (req: Request, res: Response): Promise<void> => {
         try {
             const assignment = await teacherSubjectService.update(req.params.id, req.body);
-            res.status(200).json({ success: true, data: assignment, message: "Assignment updated" });
+            this.sendSuccess(res, assignment, 200, "Assignment updated");
         } catch (err) {
-            res.status(400).json({ success: false, error: err instanceof Error ? err.message : "Error" });
+            this.sendError(res, err instanceof Error ? err.message : "Error", 400);
         }
     };
 
     static delete = async (req: Request, res: Response): Promise<void> => {
         try {
             await teacherSubjectService.delete(req.params.id);
-            res.status(200).json({ success: true, data: null, message: "Assignment deleted" });
+            this.sendSuccess(res, null, 200, "Assignment deleted");
         } catch (err) {
-            res.status(500).json({ success: false, error: err instanceof Error ? err.message : "Error" });
+            this.sendError(res, err instanceof Error ? err.message : "Error");
         }
     };
 }

@@ -10,7 +10,7 @@ export class AuthController extends BaseController {
         try {
             const { email, password } = req.body;
             if (!email || !password) {
-                return res.status(400).json({ success: false, error: "Email and password are required" });
+                return this.sendError(res, "Email and password are required", 400);
             }
 
             const result = await AuthService.login(email, password);
@@ -21,12 +21,12 @@ export class AuthController extends BaseController {
             // Verify if user is Admin or Teacher
             const userRole = result.data?.user?.user_metadata?.role;
             if (userRole !== "admin" && userRole !== "teacher") {
-                return res.status(403).json({ success: false, error: "Access denied. Only Admins and Teachers can login here." });
+                return this.sendError(res, "Access denied. Only Admins and Teachers can login here.", 403);
             }
 
             return res.status(200).json(result);
         } catch (error: any) {
-            return res.status(500).json({ success: false, error: error.message });
+            return this.sendError(res, error.message);
         }
     }
 
@@ -37,7 +37,7 @@ export class AuthController extends BaseController {
         try {
             const { email, password } = req.body;
             if (!email || !password) {
-                return res.status(400).json({ success: false, error: "Email and password are required" });
+                return this.sendError(res, "Email and password are required", 400);
             }
 
             const result = await AuthService.login(email, password);
@@ -48,12 +48,12 @@ export class AuthController extends BaseController {
             // Verify if user is Student
             const userRole = result.data?.user?.user_metadata?.role;
             if (userRole !== "student") {
-                return res.status(403).json({ success: false, error: "Access denied. Only Students can login here." });
+                return this.sendError(res, "Access denied. Only Students can login here.", 403);
             }
 
             return res.status(200).json(result);
         } catch (error: any) {
-            return res.status(500).json({ success: false, error: error.message });
+            return this.sendError(res, error.message);
         }
     }
 
@@ -64,7 +64,7 @@ export class AuthController extends BaseController {
         try {
             const { email, password, name, role } = req.body;
             if (!email || !password || !name || !role) {
-                return res.status(400).json({ success: false, error: "Missing required fields" });
+                return this.sendError(res, "Missing required fields", 400);
             }
 
             const result = await AuthService.register(email, password, name, role);
@@ -74,7 +74,7 @@ export class AuthController extends BaseController {
 
             return res.status(201).json(result);
         } catch (error: any) {
-            return res.status(500).json({ success: false, error: error.message });
+            return this.sendError(res, error.message);
         }
     }
 
@@ -84,14 +84,14 @@ export class AuthController extends BaseController {
     static async me(req: Request, res: Response) {
         try {
             const token = req.headers.authorization?.split(" ")[1];
-            if (!token) return res.status(401).json({ success: false, error: "No token provided" });
+            if (!token) return this.sendError(res, "No token provided", 401);
 
             const result = await AuthService.getCurrentUser(token);
             if (!result.success) return res.status(401).json(result);
 
             return res.status(200).json(result);
         } catch (error: any) {
-            return res.status(500).json({ success: false, error: error.message });
+            return this.sendError(res, error.message);
         }
     }
 
@@ -101,12 +101,12 @@ export class AuthController extends BaseController {
     static async logout(req: Request, res: Response) {
         try {
             const token = req.headers.authorization?.split(" ")[1];
-            if (!token) return res.status(401).json({ success: false, error: "No token provided" });
+            if (!token) return this.sendError(res, "No token provided", 401);
 
             const result = await AuthService.logout(token);
             return res.status(200).json(result);
         } catch (error: any) {
-            return res.status(500).json({ success: false, error: error.message });
+            return this.sendError(res, error.message);
         }
     }
 
@@ -116,12 +116,11 @@ export class AuthController extends BaseController {
     static async createAdmin(req: Request, res: Response) {
         try {
             const { name, email, password } = req.body;
-            // In a real app, you might want to check if any admin exists first
             const result = await AuthService.register(email, password, name, "admin");
             if (!result.success) return res.status(400).json(result);
             return res.status(201).json(result);
         } catch (error: any) {
-            return res.status(500).json({ success: false, error: error.message });
+            return this.sendError(res, error.message);
         }
     }
 }

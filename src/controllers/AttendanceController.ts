@@ -5,14 +5,12 @@ import { AttendanceService } from "../services/AttendanceService";
 const attendanceService = new AttendanceService();
 
 export class AttendanceController extends BaseController {
-    registerRoutes(): void { }
-
     static getAll = async (req: Request, res: Response): Promise<void> => {
         try {
             const attendance = await attendanceService.getAll();
-            res.status(200).json({ success: true, data: attendance });
+            this.sendSuccess(res, attendance);
         } catch (err) {
-            res.status(500).json({ success: false, error: err instanceof Error ? err.message : "Failed to fetch attendance" });
+            this.sendError(res, err instanceof Error ? err.message : "Failed to fetch attendance");
         }
     };
 
@@ -20,12 +18,12 @@ export class AttendanceController extends BaseController {
         try {
             const attendance = await attendanceService.getById(req.params.id);
             if (!attendance) {
-                res.status(404).json({ success: false, error: "Attendance record not found" });
+                this.sendError(res, "Attendance record not found", 404);
                 return;
             }
-            res.status(200).json({ success: true, data: attendance });
+            this.sendSuccess(res, attendance);
         } catch (err) {
-            res.status(500).json({ success: false, error: err instanceof Error ? err.message : "Error" });
+            this.sendError(res, err instanceof Error ? err.message : "Error");
         }
     };
 
@@ -42,18 +40,18 @@ export class AttendanceController extends BaseController {
                 }))
             });
             
-            res.status(201).json({ success: true, data: result, message: "Attendance submitted successfully" });
+            this.sendSuccess(res, result, 201, "Attendance submitted successfully");
         } catch (err) {
-            res.status(400).json({ success: false, error: err instanceof Error ? err.message : "Error" });
+            this.sendError(res, err instanceof Error ? err.message : "Error", 400);
         }
     };
 
     static getSummary = async (req: Request, res: Response): Promise<void> => {
         try {
             const summary = await attendanceService.getSummary();
-            res.status(200).json({ success: true, data: summary });
+            this.sendSuccess(res, summary);
         } catch (err) {
-            res.status(500).json({ success: false, error: err instanceof Error ? err.message : "Error" });
+            this.sendError(res, err instanceof Error ? err.message : "Error");
         }
     };
 }
