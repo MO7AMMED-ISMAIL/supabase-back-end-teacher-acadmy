@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import { db } from "../config/database";
 import { ApiResponse } from "../types";
 
-export const authMiddleware = (
+export const authMiddleware = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -20,13 +20,22 @@ export const authMiddleware = (
     const token = authHeader.split(" ")[1];
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "your_secret_key");
-        (req as any).user = decoded;
+        const { data: { user }, error } = await db.auth.getUser(token);
+        
+        if (error || !user) {
+            const response: ApiResponse = {
+                success: false,
+                error: "Unauthorized: Invalid or expired token",
+            };
+            return res.status(401).json(response);
+        }
+
+        (req as any).user = user;
         next();
     } catch (err) {
         const response: ApiResponse = {
             success: false,
-            error: "Unauthorized: Invalid token",
+            error: "Unauthorized: Token verification failed",
         };
         return res.status(401).json(response);
     }

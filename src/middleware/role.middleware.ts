@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { UserModel } from "../models/UserModel";
 import { ApiResponse } from "../types";
-
-const userModel = new UserModel();
 
 /**
  * Middleware to restrict access based on user roles.
@@ -13,10 +10,10 @@ const userModel = new UserModel();
 export const requireRole = (...allowedRoles: string[]) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
-            // Assuming authMiddleware attaches the decoded token to req.user
+            // Assuming authMiddleware attaches the Supabase user to req.user
             const user = (req as any).user;
 
-            if (!user || !user.id) {
+            if (!user) {
                 const response: ApiResponse = {
                     success: false,
                     error: "Unauthorized: User information missing from request",
@@ -24,29 +21,17 @@ export const requireRole = (...allowedRoles: string[]) => {
                 return res.status(401).json(response);
             }
 
-            // Fetch user from database to get the latest role
-            const userData = await userModel.findById(user.id);
+            // Get role from Supabase user metadata
+            const userRole = user.user_metadata?.role;
 
-            if (!userData) {
+            if (!userRole || !allowedRoles.includes(userRole)) {
                 const response: ApiResponse = {
                     success: false,
-                    error: "User not found",
+                    error: `Access denied. Your role: ${userRole ?? 'none'}. Required role: ${allowedRoles.join(" or ")}`,
                 };
                 return res.status(403).json(response);
             }
 
-            const userRole = userData.role;
-
-            if (!allowedRoles.includes(userRole)) {
-                const response: ApiResponse = {
-                    success: false,
-                    error: `Access denied. Required role: ${allowedRoles.join(" or ")}`,
-                };
-                return res.status(403).json(response);
-            }
-
-            // Attach role to request for use in controllers if needed
-            (req as any).userRole = userRole;
             next();
         } catch (err: any) {
             const response: ApiResponse = {
