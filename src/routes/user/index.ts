@@ -5,12 +5,11 @@ import { validate } from "../../middleware/validator.middleware";
 import { authMiddleware } from "../../middleware/auth.middleware";
 
 const router = Router();
-const userController = new UserController();
 
-router.get("/", authMiddleware, userController.getAll);
-router.get("/:id", authMiddleware, userController.getById);
-router.post("/", userValidator, validate, userController.create);
-router.put("/:id", authMiddleware, userValidator, validate, userController.update);
-router.delete("/:id", authMiddleware, userController.delete);
+router.get("/", authMiddleware, UserController.getAll);
+router.get("/:id", authMiddleware, UserController.getById);
+router.post("/", userValidator, validate, UserController.create);
+router.put("/:id", authMiddleware, userValidator, validate, UserController.update);
+router.delete("/:id", authMiddleware, UserController.delete);
 
 export default router;
