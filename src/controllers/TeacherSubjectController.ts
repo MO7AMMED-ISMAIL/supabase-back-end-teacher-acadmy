@@ -8,9 +8,9 @@ export class TeacherSubjectController extends BaseController {
     static getAll = async (req: Request, res: Response): Promise<void> => {
         try {
             const assignments = await teacherSubjectService.getAll();
-            this.sendSuccess(res, assignments);
+            TeacherSubjectController.sendSuccess(res, assignments);
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Failed to fetch assignments");
+            TeacherSubjectController.sendError(res, err instanceof Error ? err.message : "Failed to fetch assignments");
         }
     };
 
@@ -18,39 +18,39 @@ export class TeacherSubjectController extends BaseController {
         try {
             const assignment = await teacherSubjectService.getById(req.params.id);
             if (!assignment) {
-                this.sendError(res, "Assignment not found", 404);
+                TeacherSubjectController.sendError(res, "Assignment not found", 404);
                 return;
             }
-            this.sendSuccess(res, assignment);
+            TeacherSubjectController.sendSuccess(res, assignment);
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Error");
+            TeacherSubjectController.sendError(res, err instanceof Error ? err.message : "Error");
         }
     };
 
     static create = async (req: Request, res: Response): Promise<void> => {
         try {
             const assignment = await teacherSubjectService.create(req.body);
-            this.sendSuccess(res, assignment, 201, "Assignment created");
+            TeacherSubjectController.sendSuccess(res, assignment, 201, "Assignment created");
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Error", 400);
+            TeacherSubjectController.sendError(res, err instanceof Error ? err.message : "Error", 400);
         }
     };
 
     static update = async (req: Request, res: Response): Promise<void> => {
         try {
             const assignment = await teacherSubjectService.update(req.params.id, req.body);
-            this.sendSuccess(res, assignment, 200, "Assignment updated");
+            TeacherSubjectController.sendSuccess(res, assignment, 200, "Assignment updated");
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Error", 400);
+            TeacherSubjectController.sendError(res, err instanceof Error ? err.message : "Error", 400);
         }
     };
 
     static delete = async (req: Request, res: Response): Promise<void> => {
         try {
             await teacherSubjectService.delete(req.params.id);
-            this.sendSuccess(res, null, 200, "Assignment deleted");
+            TeacherSubjectController.sendSuccess(res, null, 200, "Assignment deleted");
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Error");
+            TeacherSubjectController.sendError(res, err instanceof Error ? err.message : "Error");
         }
     };
 }

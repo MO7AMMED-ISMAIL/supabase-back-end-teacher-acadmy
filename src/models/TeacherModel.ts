@@ -35,6 +35,7 @@ export class TeacherModel extends BaseModel<ITeacher> {
         // Flatten the structure
         return (data as any[]).map(item => ({
             id: item.id,
+            _id: item.id,
             full_name: item.full_name,
             email: item.email,
             role: item.role,

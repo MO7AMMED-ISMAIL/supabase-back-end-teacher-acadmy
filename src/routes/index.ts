@@ -8,6 +8,7 @@ import enrollmentRoutes from "./enrollment";
 import studentRoutes from "./student";
 import scheduleRoutes from "./schedule";
 import attendanceRoutes from "./attendance";
+import dashboardRoutes from "./dashboard";
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use("/enrollments", enrollmentRoutes);
 router.use("/students", studentRoutes);
 router.use("/schedules", scheduleRoutes);
 router.use("/attendance", attendanceRoutes);
+router.use("/dashboard", dashboardRoutes);
 
 export default router;

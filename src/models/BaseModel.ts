@@ -19,25 +19,30 @@ export abstract class BaseModel<T> {
 
         const { data, error } = await query;
         if (error) throw new Error(error.message);
-        return (data as T[]) ?? [];
+        
+        return ((data as any[]) ?? []).map(item => ({
+            ...item,
+            _id: item.id
+        })) as T[];
     }
 
     async findById(id: string): Promise<T | null> {
         const { data, error } = await db.from(this.tableName).select("*").eq("id", id).single();
         if (error) throw new Error(error.message);
-        return data as T;
+        if (!data) return null;
+        return { ...data, _id: (data as any).id } as T;
     }
 
     async create(payload: Partial<T>): Promise<T> {
         const { data, error } = await db.from(this.tableName).insert(payload as any).select().single();
         if (error) throw new Error(error.message);
-        return data as T;
+        return { ...data, _id: (data as any).id } as T;
     }
 
     async update(id: string, payload: Partial<T>): Promise<T> {
         const { data, error } = await db.from(this.tableName).update(payload as any).eq("id", id).select().single();
         if (error) throw new Error(error.message);
-        return data as T;
+        return { ...data, _id: (data as any).id } as T;
     }
 
     async delete(id: string): Promise<boolean> {
