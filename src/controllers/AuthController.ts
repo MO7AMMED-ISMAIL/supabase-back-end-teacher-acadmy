@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { AuthService } from "../services/AuthService";
+import { db } from "../config/database";
 import { BaseController } from "./BaseController";
 
 export class AuthController extends BaseController {
@@ -116,6 +117,18 @@ export class AuthController extends BaseController {
     static async createAdmin(req: Request, res: Response) {
         try {
             const { name, email, password } = req.body;
+
+            // Check if any admin exists
+            const { count, error: countError } = await db
+                .from("users")
+                .select("*", { count: "exact", head: true })
+                .eq("role", "admin");
+
+            if (countError) return this.sendError(res, countError.message);
+            if (count && count > 0) {
+                return this.sendError(res, "Admin already exists. This route is for initial setup only.", 403);
+            }
+
             const result = await AuthService.register(email, password, name, "admin");
             if (!result.success) return res.status(400).json(result);
             return res.status(201).json(result);

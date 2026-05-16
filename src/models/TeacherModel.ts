@@ -16,7 +16,7 @@ export class TeacherModel extends BaseModel<ITeacher> {
 
     async findAllTeachers(): Promise<ITeacher[]> {
         const { data, error } = await db
-            .from("profiles")
+            .from("users")
             .select(`
                 id,
                 full_name,

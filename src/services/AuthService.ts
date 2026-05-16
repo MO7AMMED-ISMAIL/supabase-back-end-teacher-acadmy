@@ -44,8 +44,8 @@ export class AuthService {
 
         const user = data.user;
 
-        // 2. Create profile in our profiles table
-        const { error: profileError } = await db.from("profiles").insert({
+        // 2. Create profile in our users table
+        const { error: profileError } = await db.from("users").insert({
             id: user.id,
             email: user.email,
             full_name: fullName,
