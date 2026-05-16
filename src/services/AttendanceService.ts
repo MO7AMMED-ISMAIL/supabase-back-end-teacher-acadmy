@@ -45,10 +45,19 @@ export class AttendanceService extends BaseService<Attendance> {
         return { attendance: attendance as Attendance, records: records as AttendanceRecord[] };
     }
 
-    async getSummary() {
-        // This is a placeholder for summary stats
-        // In a real app, you'd perform aggregation queries
-        const { data, error } = await db.from("attendance_records").select("status");
+    async getSummary(teacherSubjectId?: string) {
+        let query = db.from("attendance_records").select(`
+            status,
+            attendance!inner (
+                teacher_subject_id
+            )
+        `);
+
+        if (teacherSubjectId) {
+            query = query.eq("attendance.teacher_subject_id", teacherSubjectId);
+        }
+
+        const { data, error } = await query;
         if (error) throw new Error(error.message);
 
         const summary = (data as any[]).reduce((acc: any, curr: any) => {

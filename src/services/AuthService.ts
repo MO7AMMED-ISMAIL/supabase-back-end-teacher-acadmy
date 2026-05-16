@@ -31,6 +31,8 @@ export class AuthService {
      */
     static async register(email: string, password: string, fullName: string, role: string) {
         // 1. Create user in Supabase Auth
+        // The database trigger `on_auth_user_created` will automatically create
+        // the profile in the `users` table using the provided metadata.
         const { data, error } = await db.auth.admin.createUser({
             email,
             password,
@@ -42,25 +44,9 @@ export class AuthService {
             return { success: false, error: error.message };
         }
 
-        const user = data.user;
-
-        // 2. Create profile in our users table
-        const { error: profileError } = await db.from("users").insert({
-            id: user.id,
-            email: user.email,
-            full_name: fullName,
-            role: role,
-        });
-
-        if (profileError) {
-            // Cleanup: delete auth user if profile creation fails
-            await db.auth.admin.deleteUser(user.id);
-            return { success: false, error: profileError.message };
-        }
-
         return {
             success: true,
-            data: { user },
+            data: { user: data.user },
         };
     }
 
