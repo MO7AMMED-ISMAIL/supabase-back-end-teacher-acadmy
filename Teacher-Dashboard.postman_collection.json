@@ -57,6 +57,16 @@
 			"type": "string"
 		},
 		{
+			"key": "enrollmentId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
 			"key": "adminEmail",
 			"value": "admin@school.com",
 			"type": "string"
@@ -241,7 +251,69 @@
 					"response": []
 				},
 				{
+					"name": "Mobile Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const res = pm.response.json();",
+									"if (res && res.data && res.data.session && res.data.session.access_token) {",
+									"    pm.collectionVariables.set('token', res.data.session.access_token);",
+									"    console.log('Saved token to {{token}}');",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{teacherEmail}}\",\n    \"password\": \"{{teacherPassword}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/mobile/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"mobile",
+								"login"
+							]
+						},
+						"description": "Login via mobile endpoint."
+					},
+					"response": []
+				},
+				{
 					"name": "Register (admin only)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const res = pm.response.json();",
+									"if (res && res.data && res.data.user && res.data.user.id) {",
+									"    pm.collectionVariables.set('userId', res.data.user.id);",
+									"    console.log('Saved userId = ' + res.data.user.id);",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -308,6 +380,156 @@
 			]
 		},
 		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Get Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/dashboard",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"dashboard"
+							]
+						},
+						"description": "Get admin dashboard statistics."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "List Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const res = pm.response.json();",
+									"if (res && res.data && res.data.id) {",
+									"    pm.collectionVariables.set('userId', res.data.id);",
+									"    console.log('Saved userId = ' + res.data.id);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\": \"New User\",\n    \"email\": \"newuser@school.com\",\n    \"role\": \"teacher\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\": \"Updated User Name\",\n    \"role\": \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Teachers (admin only)",
 			"item": [
 				{
@@ -324,6 +546,66 @@
 								"teachers"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Teacher by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/teachers/{{teacherId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"teachers",
+								"{{teacherId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Teacher Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const res = pm.response.json();",
+									"if (res && res.data && res.data.id) {",
+									"    pm.collectionVariables.set('teacherId', res.data.id);",
+									"    console.log('Saved teacherId = ' + res.data.id);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"{{userId}}\",\n    \"subject_specialization\": \"Mathematics\",\n    \"phone\": \"+201000000000\",\n    \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/teachers",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"teachers"
+							]
+						},
+						"description": "Create or update teacher-specific details. ID should match a user ID."
 					},
 					"response": []
 				},
@@ -521,6 +803,24 @@
 					"response": []
 				},
 				{
+					"name": "Get Assignment by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/teacher-subjects/{{teacherSubjectId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"teacher-subjects",
+								"{{teacherSubjectId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Assign Teacher to Subject",
 					"event": [
 						{
@@ -556,6 +856,51 @@
 							],
 							"path": [
 								"teacher-subjects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Assignment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"is_active\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/teacher-subjects/{{teacherSubjectId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"teacher-subjects",
+								"{{teacherSubjectId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Assignment",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/teacher-subjects/{{teacherSubjectId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"teacher-subjects",
+								"{{teacherSubjectId}}"
 							]
 						}
 					},
@@ -734,6 +1079,24 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Delete Enrollment",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/enrollments/{{enrollmentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"enrollments",
+								"{{enrollmentId}}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -752,6 +1115,24 @@
 							],
 							"path": [
 								"schedules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Schedule by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/schedules/{{scheduleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"schedules",
+								"{{scheduleId}}"
 							]
 						}
 					},
@@ -793,6 +1174,51 @@
 							],
 							"path": [
 								"schedules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Schedule",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"day_of_week\": 1,\n    \"start_time\": \"10:00\",\n    \"end_time\": \"11:30\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/schedules/{{scheduleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"schedules",
+								"{{scheduleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Schedule",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/schedules/{{scheduleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"schedules",
+								"{{scheduleId}}"
 							]
 						}
 					},
@@ -841,6 +1267,24 @@
 							],
 							"path": [
 								"attendance"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Attendance by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/attendance/{{attendanceId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"attendance",
+								"{{attendanceId}}"
 							]
 						}
 					},

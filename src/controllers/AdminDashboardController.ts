@@ -3,18 +3,12 @@ import { AdminDashboardService } from "../services/AdminDashboardService";
 import { BaseController } from "./BaseController";
 
 export class AdminDashboardController extends BaseController {
-    static async getAdminDashboard(req: Request, res: Response) {
+    static getAdminDashboard = async (req: Request, res: Response) => {
         try {
             const data = await AdminDashboardService.getDashboardData();
-            return res.json({
-                success: true,
-                data
-            });
+            this.sendSuccess(res, data);
         } catch (error: any) {
-            return res.status(500).json({
-                success: false,
-                message: error.message
-            });
+            this.sendError(res, error.message);
         }
     }
 }

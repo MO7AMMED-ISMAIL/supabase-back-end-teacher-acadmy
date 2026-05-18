@@ -16,31 +16,32 @@ export class TeacherModel extends BaseModel<ITeacher> {
 
     async findAllTeachers(): Promise<ITeacher[]> {
         const { data, error } = await db
-            .from("users")
+            .from(this.tableName)
             .select(`
                 id,
-                full_name,
-                email,
-                role,
-                teachers (
-                    subject_specialization,
-                    phone,
-                    is_active
+                subject_specialization,
+                phone,
+                is_active,
+                users (
+                    id,
+                    email,
+                    role,
+                    full_name
                 )
             `)
-            .eq("role", "teacher");
+            .eq("is_active", true);
 
         if (error) throw new Error(error.message);
         
         // Flatten the structure
         return (data as any[]).map(item => ({
             id: item.id,
-            full_name: item.full_name,
-            email: item.email,
-            role: item.role,
-            subject_specialization: item.teachers?.[0]?.subject_specialization,
-            phone: item.teachers?.[0]?.phone,
-            is_active: item.teachers?.[0]?.is_active ?? true,
+            full_name: item.users?.full_name,
+            email: item.users?.email,
+            role: item.users?.role,
+            subject_specialization: item.subject_specialization,
+            phone: item.phone,
+            is_active: item.is_active ?? true,
         }));
     }
 }

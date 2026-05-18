@@ -5,7 +5,7 @@ import { BaseController } from "./BaseController";
 const service = new SubjectService();
 
 export class SubjectController extends BaseController {
-    static async getAll(req: Request, res: Response) {
+    static getAll = async (req: Request, res: Response) => {
         try {
             const data = await service.getAll();
             this.sendSuccess(res, data);
@@ -14,7 +14,7 @@ export class SubjectController extends BaseController {
         }
     }
 
-    static async getById(req: Request, res: Response) {
+    static getById = async (req: Request, res: Response) => {
         try {
             const data = await service.getById(req.params.id);
             if (!data) return this.sendError(res, "Subject not found", 404);
@@ -24,7 +24,7 @@ export class SubjectController extends BaseController {
         }
     }
 
-    static async create(req: Request, res: Response) {
+    static create = async (req: Request, res: Response) => {
         try {
             const data = await service.create(req.body);
             this.sendSuccess(res, data, 201);
@@ -33,7 +33,7 @@ export class SubjectController extends BaseController {
         }
     }
 
-    static async update(req: Request, res: Response) {
+    static update = async (req: Request, res: Response) => {
         try {
             const data = await service.update(req.params.id, req.body);
             this.sendSuccess(res, data);
@@ -42,7 +42,7 @@ export class SubjectController extends BaseController {
         }
     }
 
-    static async delete(req: Request, res: Response) {
+    static delete = async (req: Request, res: Response) => {
         try {
             await service.delete(req.params.id);
             this.sendSuccess(res, null, 200, "Subject deleted");

@@ -7,7 +7,7 @@ export class AuthController extends BaseController {
     /**
      * Handle Dashboard Login (Admin/Teacher)
      */
-    static async dashboardLogin(req: Request, res: Response) {
+    static dashboardLogin = async (req: Request, res: Response) => {
         try {
             const { email, password } = req.body;
             if (!email || !password) {
@@ -34,7 +34,7 @@ export class AuthController extends BaseController {
     /**
      * Handle Mobile Login (Student)
      */
-    static async mobileLogin(req: Request, res: Response) {
+    static mobileLogin = async (req: Request, res: Response) => {
         try {
             const { email, password } = req.body;
             if (!email || !password) {
@@ -61,7 +61,7 @@ export class AuthController extends BaseController {
     /**
      * Register a new user
      */
-    static async register(req: Request, res: Response) {
+    static register = async (req: Request, res: Response) => {
         try {
             const { email, password, name, role } = req.body;
             if (!email || !password || !name || !role) {
@@ -82,7 +82,7 @@ export class AuthController extends BaseController {
     /**
      * Get current user profile
      */
-    static async me(req: Request, res: Response) {
+    static me = async (req: Request, res: Response) => {
         try {
             const token = req.headers.authorization?.split(" ")[1];
             if (!token) return this.sendError(res, "No token provided", 401);
@@ -99,7 +99,7 @@ export class AuthController extends BaseController {
     /**
      * Logout
      */
-    static async logout(req: Request, res: Response) {
+    static logout = async (req: Request, res: Response) => {
         try {
             const token = req.headers.authorization?.split(" ")[1];
             if (!token) return this.sendError(res, "No token provided", 401);
@@ -114,7 +114,7 @@ export class AuthController extends BaseController {
     /**
      * Create Admin (One-time or protected)
      */
-    static async createAdmin(req: Request, res: Response) {
+    static createAdmin = async (req: Request, res: Response) => {
         try {
             const { name, email, password } = req.body;
 

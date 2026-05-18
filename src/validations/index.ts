@@ -31,15 +31,6 @@ export const subjectValidations = {
     ]
 };
 
-export const teacherValidations = {
-    update: [
-        param("id").isUUID().withMessage("Invalid teacher ID"),
-        body("subject_specialization").optional().isString(),
-        body("phone").optional().isString(),
-        body("is_active").optional().isBoolean(),
-    ]
-};
-
 export const studentValidations = {
     create: [
         body("full_name").notEmpty().withMessage("Full name is required"),
