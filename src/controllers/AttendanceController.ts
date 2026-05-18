@@ -8,9 +8,9 @@ export class AttendanceController extends BaseController {
     static getAll = async (req: Request, res: Response): Promise<void> => {
         try {
             const attendance = await attendanceService.getAll();
-            this.sendSuccess(res, attendance);
+            AttendanceController.sendSuccess(res, attendance);
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Failed to fetch attendance");
+            AttendanceController.sendError(res, err instanceof Error ? err.message : "Failed to fetch attendance");
         }
     };
 
@@ -18,12 +18,12 @@ export class AttendanceController extends BaseController {
         try {
             const attendance = await attendanceService.getById(req.params.id);
             if (!attendance) {
-                this.sendError(res, "Attendance record not found", 404);
+                AttendanceController.sendError(res, "Attendance record not found", 404);
                 return;
             }
-            this.sendSuccess(res, attendance);
+            AttendanceController.sendSuccess(res, attendance);
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Error");
+            AttendanceController.sendError(res, err instanceof Error ? err.message : "Error");
         }
     };
 
@@ -40,18 +40,19 @@ export class AttendanceController extends BaseController {
                 }))
             });
             
-            this.sendSuccess(res, result, 201, "Attendance submitted successfully");
+            AttendanceController.sendSuccess(res, result, 201, "Attendance submitted successfully");
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Error", 400);
+            AttendanceController.sendError(res, err instanceof Error ? err.message : "Error", 400);
         }
     };
 
     static getSummary = async (req: Request, res: Response): Promise<void> => {
         try {
-            const summary = await attendanceService.getSummary();
-            this.sendSuccess(res, summary);
+            const { teacherSubject } = req.query;
+            const summary = await attendanceService.getSummary(teacherSubject as string);
+            AttendanceController.sendSuccess(res, summary);
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Error");
+            AttendanceController.sendError(res, err instanceof Error ? err.message : "Error");
         }
     };
 }

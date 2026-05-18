@@ -22,5 +22,6 @@ router.use("/enrollments", enrollmentRoutes);
 router.use("/students", studentRoutes);
 router.use("/schedules", scheduleRoutes);
 router.use("/attendance", attendanceRoutes);
+router.use("/dashboard", dashboardRoutes);
 
 export default router;

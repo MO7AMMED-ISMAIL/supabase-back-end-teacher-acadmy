@@ -8,27 +8,27 @@ export class EnrollmentController extends BaseController {
     static getAll = async (req: Request, res: Response): Promise<void> => {
         try {
             const enrollments = await enrollmentService.getAll();
-            this.sendSuccess(res, enrollments);
+            EnrollmentController.sendSuccess(res, enrollments);
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Failed to fetch enrollments");
+            EnrollmentController.sendError(res, err instanceof Error ? err.message : "Failed to fetch enrollments");
         }
     };
 
     static create = async (req: Request, res: Response): Promise<void> => {
         try {
             const enrollment = await enrollmentService.create(req.body);
-            this.sendSuccess(res, enrollment, 201, "Enrollment created");
+            EnrollmentController.sendSuccess(res, enrollment, 201, "Enrollment created");
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Error", 400);
+            EnrollmentController.sendError(res, err instanceof Error ? err.message : "Error", 400);
         }
     };
 
     static delete = async (req: Request, res: Response): Promise<void> => {
         try {
             await enrollmentService.delete(req.params.id);
-            this.sendSuccess(res, null, 200, "Enrollment deleted");
+            EnrollmentController.sendSuccess(res, null, 200, "Enrollment deleted");
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Error");
+            EnrollmentController.sendError(res, err instanceof Error ? err.message : "Error");
         }
     };
 }

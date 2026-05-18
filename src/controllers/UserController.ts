@@ -8,46 +8,46 @@ export class UserController extends BaseController {
     static getAll = async (req: Request, res: Response): Promise<void> => {
         try {
             const users = await userService.getAll();
-            this.sendSuccess(res, users);
+            UserController.sendSuccess(res, users);
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Failed to fetch users");
+            UserController.sendError(res, err instanceof Error ? err.message : "Failed to fetch users");
         }
     };
 
     static getById = async (req: Request, res: Response): Promise<void> => {
         try {
             const user = await userService.getById(req.params.id);
-            if (!user) return void this.sendError(res, "User not found", 404);
-            this.sendSuccess(res, user);
+            if (!user) return void UserController.sendError(res, "User not found", 404);
+            UserController.sendSuccess(res, user);
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Error");
+            UserController.sendError(res, err instanceof Error ? err.message : "Error");
         }
     };
 
     static create = async (req: Request, res: Response): Promise<void> => {
         try {
             const user = await userService.create(req.body);
-            this.sendSuccess(res, user, 201, "User created");
+            UserController.sendSuccess(res, user, 201, "User created");
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Error", 400);
+            UserController.sendError(res, err instanceof Error ? err.message : "Error", 400);
         }
     };
 
     static update = async (req: Request, res: Response): Promise<void> => {
         try {
             const user = await userService.update(req.params.id, req.body);
-            this.sendSuccess(res, user, 200, "User updated");
+            UserController.sendSuccess(res, user, 200, "User updated");
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Error", 400);
+            UserController.sendError(res, err instanceof Error ? err.message : "Error", 400);
         }
     };
 
     static delete = async (req: Request, res: Response): Promise<void> => {
         try {
             await userService.delete(req.params.id);
-            this.sendSuccess(res, null, 200, "User deleted");
+            UserController.sendSuccess(res, null, 200, "User deleted");
         } catch (err) {
-            this.sendError(res, err instanceof Error ? err.message : "Error");
+            UserController.sendError(res, err instanceof Error ? err.message : "Error");
         }
     };
 }
