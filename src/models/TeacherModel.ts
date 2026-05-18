@@ -32,7 +32,7 @@ export class TeacherModel extends BaseModel<ITeacher> {
             .eq("is_active", true);
 
         if (error) throw new Error(error.message);
-        
+
         // Flatten the structure
         return (data as any[]).map(item => ({
             id: item.id,
